@@ -4,6 +4,14 @@
   "description": "React + Tailwind admin component library with a prop-driven API.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koi-design/koi-ui.git"
+  },
+  "homepage": "https://github.com/koi-design/koi-ui#readme",
+  "bugs": {
+    "url": "https://github.com/koi-design/koi-ui/issues"
+  },
   "files": [
     "dist"
   ],

@@ -52,7 +52,7 @@ export function Layout() {
         <div className="flex-1" />
         <Button icon={dark ? Sun : Moon} text aria-label="Toggle theme" onClick={toggle} />
         <a
-          href="https://github.com/koi-desigin/koi-ui"
+          href="https://github.com/koi-design/koi-ui"
           target="_blank"
           rel="noreferrer"
           className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
