@@ -3,6 +3,8 @@
 A prop-driven **React + Tailwind CSS** component library built for admin/back-office systems.
 Behaviour is powered by **Radix UI** primitives; styling is themeable via CSS variables (light + dark).
 
+**📚 Docs & live demo: [koi-design.github.io/koi-ui](https://koi-design.github.io/koi-ui/)**
+
 > 72 components across forms, data, panels, overlays, navigation, feedback and media — plus a
 > Form system with validation. Heavy components (charts, carousel, drag-and-drop, file upload)
 > ship under subpaths as **optional peer dependencies**, so the core stays light.
