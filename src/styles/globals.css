@@ -1,0 +1,69 @@
+/**
+ * koi-ui theme variables (light + dark).
+ * Import once in your app entry:  import 'koi-ui/styles.css'
+ * Retheme by overriding any of these custom properties.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --koi-radius: 6px;
+
+  /* surfaces & text — neutral shade scale */
+  --koi-background: 0 0% 100%;          /* shade000 */
+  --koi-surface: 210 40% 98%;           /* shade100 header bg */
+  --koi-foreground: 217 33% 17%;        /* shade900 text */
+  --koi-muted: 210 40% 96%;             /* shade200 hover / filled */
+  --koi-muted-foreground: 215 16% 47%;  /* shade600 secondary text */
+  --koi-border: 214 32% 91%;            /* shade300 */
+  --koi-input: 213 27% 84%;             /* shade400 input border */
+  --koi-ring: 239 84% 67%;              /* primary focus ring */
+
+  /* primary — indigo */
+  --koi-primary: 239 84% 67%;           /* #6366F1 */
+  --koi-primary-foreground: 0 0% 100%;
+
+  /* severities */
+  --koi-success: 142 71% 45%;           /* #22C55E */
+  --koi-success-foreground: 0 0% 100%;
+  --koi-info: 217 91% 60%;              /* #3B82F6 */
+  --koi-info-foreground: 0 0% 100%;
+  --koi-warning: 45 93% 47%;            /* #EAB308 */
+  --koi-warning-foreground: 0 0% 100%;
+  --koi-danger: 0 71% 59%;              /* #e24c4c */
+  --koi-danger-foreground: 0 0% 100%;
+  --koi-help: 271 91% 65%;              /* #A855F7 */
+  --koi-help-foreground: 0 0% 100%;
+}
+
+/* Indeterminate progress bar animation (used by <Progress mode="indeterminate" />). */
+.koi-progress-indeterminate {
+  animation: koi-progress-indeterminate 2s infinite ease-in-out;
+}
+@keyframes koi-progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+.dark {
+  --koi-background: 222 47% 11%;        /* slate-900 */
+  --koi-surface: 217 33% 17%;
+  --koi-foreground: 210 40% 98%;
+  --koi-muted: 217 33% 17%;
+  --koi-muted-foreground: 215 20% 65%;
+  --koi-border: 215 25% 27%;
+  --koi-input: 215 25% 27%;
+  --koi-ring: 234 89% 74%;
+
+  --koi-primary: 234 89% 74%;           /* #818cf8 */
+  --koi-primary-foreground: 222 47% 11%;
+
+  --koi-success: 142 69% 58%;
+  --koi-info: 217 91% 70%;
+  --koi-warning: 45 93% 58%;
+  --koi-danger: 0 84% 71%;
+  --koi-help: 271 91% 75%;
+}
