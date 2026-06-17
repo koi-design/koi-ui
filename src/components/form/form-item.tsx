@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
-import { useFormContext, type Rule, type ValidateStatus } from './form-context'
+import { useFormContext, type Rule, type ValidateStatus, type ValidateTrigger } from './form-context'
 
 export interface FormItemProps {
   /** Field name; binds the child control to the form store. Omit for layout-only. */
@@ -18,6 +18,8 @@ export interface FormItemProps {
   valuePropName?: string
   /** Event name that reports changes. */
   trigger?: string
+  /** Override the form's validateTrigger for this field. */
+  validateTrigger?: ValidateTrigger | ValidateTrigger[]
   /** Extract the value from the trigger's argument. */
   getValueFromEvent?: (arg: unknown) => unknown
   children: React.ReactElement
@@ -51,6 +53,7 @@ export function FormItem({
   validateStatus,
   valuePropName = 'value',
   trigger = 'onChange',
+  validateTrigger,
   getValueFromEvent = defaultGetValue,
   children,
   className,
@@ -70,15 +73,32 @@ export function FormItem({
   const isRequired = required ?? rules?.some((r) => r.required) ?? false
   const horizontal = ctx?.layout === 'horizontal'
 
+  // Has the user interacted with this field yet? Used to gate onBlur validation.
+  const dirtyRef = React.useRef(false)
+  const triggers = validateTrigger
+    ? Array.isArray(validateTrigger)
+      ? validateTrigger
+      : [validateTrigger]
+    : ctx?.validateTrigger ?? []
+
   let control = children
   if (ctx && name) {
     const childProps = children.props as Record<string, unknown>
     control = React.cloneElement(children, {
-      [valuePropName]: ctx.values[name] ?? (valuePropName === 'value' ? '' : undefined),
+      // Keep controls controlled: empty string for value-based inputs,
+      // false for boolean props (e.g. checked) so reset clears them.
+      [valuePropName]: ctx.values[name] ?? (valuePropName === 'value' ? '' : false),
       invalid: status === 'error' || undefined,
       [trigger]: (arg: unknown) => {
-        ctx.setValue(name, getValueFromEvent(arg))
+        dirtyRef.current = true
+        const value = getValueFromEvent(arg)
+        ctx.setValue(name, value)
+        if (triggers.includes('onChange')) ctx.validateField(name, value)
         ;(childProps[trigger] as ((arg: unknown) => void) | undefined)?.(arg)
+      },
+      onBlur: (e: React.FocusEvent) => {
+        if (dirtyRef.current && triggers.includes('onBlur')) ctx.validateField(name, ctx.values[name])
+        ;(childProps.onBlur as ((e: React.FocusEvent) => void) | undefined)?.(e)
       },
     } as Record<string, unknown>)
   }
@@ -103,13 +123,17 @@ export function FormItem({
   const helpNode = (status === 'error' && error?.message) || help
   const helpColor =
     status === 'error' ? 'text-danger' : status === 'warning' ? 'text-warning' : 'text-muted-foreground'
+  // Bound fields reserve a constant-height message row so showing/hiding the
+  // error doesn't change the item's height (no layout shift / jitter).
+  const isBound = !!(ctx && name)
+  const showMessageRow = isBound || helpNode != null || extra != null
 
   return (
     <div
       className={cn(
         'koi-form-item',
-        horizontal && 'flex gap-3',
-        ctx?.layout === 'inline' ? 'mb-0' : 'mb-6',
+        horizontal && 'flex items-start gap-3',
+        ctx?.layout === 'inline' ? 'mb-0' : showMessageRow ? 'mb-2' : 'mb-6',
         className,
       )}
     >
@@ -121,8 +145,12 @@ export function FormItem({
         ) : (
           control
         )}
-        {helpNode != null && <div className={cn('mt-1 text-xs', helpColor)}>{helpNode}</div>}
-        {extra != null && <div className="mt-1 text-xs text-muted-foreground">{extra}</div>}
+        {showMessageRow && (
+          <div className="mt-1 min-h-[1.25rem] text-xs leading-5">
+            {helpNode != null && <div className={helpColor}>{helpNode}</div>}
+            {extra != null && <div className="text-muted-foreground">{extra}</div>}
+          </div>
+        )}
       </div>
     </div>
   )

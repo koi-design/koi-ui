@@ -2,6 +2,8 @@ import * as React from 'react'
 
 export type FormLayout = 'horizontal' | 'vertical' | 'inline'
 export type ValidateStatus = 'error' | 'warning' | 'success' | 'validating'
+/** When to run a field's validation rules (antd-style). */
+export type ValidateTrigger = 'onChange' | 'onBlur'
 
 export interface Rule {
   required?: boolean
@@ -26,9 +28,13 @@ export interface FormContextValue {
   colon: boolean
   requiredMark: boolean
   labelWidth?: number | string
+  /** Form-level default for when fields validate. */
+  validateTrigger: ValidateTrigger[]
   values: Record<string, unknown>
   errors: Record<string, FieldError>
   setValue: (name: string, value: unknown) => void
+  /** Validate a single field's value against its rules and update its error. */
+  validateField: (name: string, value: unknown) => void
   registerField: (name: string, rules?: Rule[]) => void
   unregisterField: (name: string) => void
 }

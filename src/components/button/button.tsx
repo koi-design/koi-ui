@@ -115,6 +115,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     disabled,
     className,
     children,
+    // Default to "button" so a Button inside a <form> doesn't act as an
+    // implicit submit. Pass type="submit" explicitly to opt in.
+    type = 'button',
     ...props
   },
   ref,
@@ -126,6 +129,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
   return (
     <button
       ref={ref}
+      type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cn(buttonVariants({ severity, appearance, size, rounded, iconOnly }), className)}

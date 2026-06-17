@@ -6,8 +6,9 @@ import {
   type FormLayout,
   type FieldError,
   type Rule,
+  type ValidateTrigger,
 } from './form-context'
-import type { FormInstance, FormInstanceInternal } from './use-form'
+import { runRules, type FormInstance, type FormInstanceInternal } from './use-form'
 
 export interface FormProps<T = Record<string, unknown>>
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
@@ -19,6 +20,8 @@ export interface FormProps<T = Record<string, unknown>>
   requiredMark?: boolean
   /** Width of labels in horizontal layout. */
   labelWidth?: number | string
+  /** When fields validate. Default ['onChange', 'onBlur']. */
+  validateTrigger?: ValidateTrigger | ValidateTrigger[]
   onFinish?: (values: T) => void
   onFinishFailed?: (errors: Record<string, FieldError>) => void
 }
@@ -41,12 +44,14 @@ export function Form<T = Record<string, unknown>>({
   colon = false,
   requiredMark = true,
   labelWidth,
+  validateTrigger = ['onChange', 'onBlur'],
   onFinish,
   onFinishFailed,
   className,
   children,
   ...props
 }: FormProps<T>) {
+  const resolvedTriggers = Array.isArray(validateTrigger) ? validateTrigger : [validateTrigger]
   const [values, setValues] = React.useState<Record<string, unknown>>(
     (initialValues as Record<string, unknown>) ?? {},
   )
@@ -56,6 +61,8 @@ export function Form<T = Record<string, unknown>>({
   // connect the external instance (from useForm) to this form's store
   const valuesRef = React.useRef(values)
   valuesRef.current = values
+  const initialValuesRef = React.useRef(initialValues)
+  initialValuesRef.current = initialValues
   React.useMemo(() => {
     const internal = form as FormInstanceInternal<T> | undefined
     internal?.__attach?.({
@@ -63,6 +70,10 @@ export function Form<T = Record<string, unknown>>({
       setStore: (v) => setValues(v),
       setErrors,
       getRules: () => rulesRef.current,
+      reset: () => {
+        setValues({ ...((initialValuesRef.current as Record<string, unknown>) ?? {}) })
+        setErrors({})
+      },
       onFinish,
       onFinishFailed,
     })
@@ -74,11 +85,23 @@ export function Form<T = Record<string, unknown>>({
     colon,
     requiredMark,
     labelWidth,
+    validateTrigger: resolvedTriggers,
     values,
     errors,
     setValue: (name, value) => {
       setValues((prev) => ({ ...prev, [name]: value }))
-      setErrors((prev) => (prev[name] ? { ...prev, [name]: undefined as never } : prev))
+    },
+    validateField: (name, value) => {
+      const fieldRules = rulesRef.current[name]
+      if (!fieldRules) return
+      void runRules(value, fieldRules).then((msg) => {
+        setErrors((prev) => {
+          const next = { ...prev }
+          if (msg) next[name] = { status: 'error', message: msg }
+          else delete next[name]
+          return next
+        })
+      })
     },
     registerField: (name, fieldRules) => {
       if (fieldRules) rulesRef.current[name] = fieldRules

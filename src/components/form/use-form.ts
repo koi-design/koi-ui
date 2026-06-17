@@ -19,6 +19,8 @@ export interface FormInstanceInternal<T = Record<string, unknown>> extends FormI
     setStore: (values: Record<string, unknown>) => void
     setErrors: (errors: Record<string, FieldError>) => void
     getRules: () => Record<string, Rule[]>
+    /** Restore values to initialValues and clear all validation errors. */
+    reset: () => void
     onFinish?: (values: T) => void
     onFinishFailed?: (errors: Record<string, FieldError>) => void
   }) => void
@@ -80,7 +82,7 @@ export function useForm<T = Record<string, unknown>>(): FormInstance<T> {
         if (!api) return
         api.setStore({ ...api.getStore(), ...(values as Record<string, unknown>) })
       },
-      resetFields: () => api?.setStore({}),
+      resetFields: () => api?.reset(),
       validateFields: async () => {
         if (!api) return {} as T
         const store = api.getStore()
