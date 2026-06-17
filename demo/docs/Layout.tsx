@@ -38,9 +38,9 @@ export function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="flex h-screen flex-col bg-background text-foreground">
       {/* Topbar */}
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-background/90 px-4 backdrop-blur">
+      <header className="z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background/90 px-4 backdrop-blur">
         <button className="lg:hidden" onClick={() => setMobileOpen((o) => !o)} aria-label="Menu">
           <MenuIcon className="size-5" />
         </button>
@@ -62,15 +62,15 @@ export function Layout() {
         </a>
       </header>
 
-      <div className="mx-auto flex max-w-[90rem]">
-        {/* Sidebar */}
+      <div className="mx-auto flex w-full min-h-0 max-w-[90rem] flex-1">
+        {/* Sidebar — fixed; the content area scrolls independently. */}
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 top-14 z-20 w-64 border-r border-border bg-background transition-transform lg:sticky lg:translate-x-0',
+            'fixed inset-y-0 left-0 top-14 z-20 w-64 shrink-0 border-r border-border bg-background transition-transform lg:static lg:top-0 lg:h-full lg:translate-x-0',
             mobileOpen ? 'translate-x-0' : '-translate-x-full',
           )}
         >
-          <ScrollArea className="h-[calc(100vh-3.5rem)] px-3 py-4">
+          <ScrollArea className="h-[calc(100vh-3.5rem)] px-3 py-4 lg:h-full">
             <nav className="space-y-5">
               {nav.map((group) => (
                 <div key={group.title}>
@@ -103,14 +103,14 @@ export function Layout() {
           <div className="fixed inset-0 top-14 z-10 bg-black/40 lg:hidden" onClick={() => setMobileOpen(false)} />
         )}
 
-        {/* Content */}
-        <main className="min-w-0 flex-1">
+        {/* Content — the only scroll container */}
+        <main data-scrollable className="relative min-w-0 flex-1 overflow-y-auto">
           <Outlet />
+          <ScrollTop threshold={300} target="parent" />
         </main>
       </div>
 
       <Toaster />
-      <ScrollTop threshold={300} />
     </div>
   )
 }
