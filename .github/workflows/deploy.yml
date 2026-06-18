@@ -3,6 +3,16 @@ name: Deploy docs to GitHub Pages
 on:
   push:
     branches: [main]
+    # Only redeploy the docs site when the demo or library source changes.
+    # Pure doc-only commits (README, etc.) won't trigger a rebuild; use the
+    # manual "Run workflow" button below if you ever need to force a deploy.
+    paths:
+      - 'src/**'
+      - 'demo/**'
+      - 'index.html'
+      - 'vite.config.ts'
+      - 'tailwind.config.ts'
+      - 'postcss.config.js'
   workflow_dispatch:
 
 # Allow the workflow to publish to Pages.
