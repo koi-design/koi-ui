@@ -24,7 +24,7 @@ Behaviour is powered by **Radix UI** primitives; styling is themeable via CSS va
 ## Installation
 
 ```bash
-pnpm add koi-ui
+pnpm add @koidesign/koi-ui
 # peers
 pnpm add react react-dom tailwindcss
 ```
@@ -35,24 +35,24 @@ pnpm add react react-dom tailwindcss
 
 ```ts
 // tailwind.config.ts
-import koiPreset from 'koi-ui/preset'
+import koiPreset from '@koidesign/koi-ui/preset'
 
 export default {
   presets: [koiPreset],
-  content: ['./src/**/*.{ts,tsx}', './node_modules/koi-ui/dist/**/*.js'],
+  content: ['./src/**/*.{ts,tsx}', './node_modules/@koidesign/koi-ui/dist/**/*.js'],
 }
 ```
 
 **2. Import the theme variables once at your app entry**
 
 ```ts
-import 'koi-ui/styles.css'
+import '@koidesign/koi-ui/styles.css'
 ```
 
 **3. Use components**
 
 ```tsx
-import { Button, Input, DataTable } from 'koi-ui'
+import { Button, Input, DataTable } from '@koidesign/koi-ui'
 
 export function Example() {
   return <Button label="Save" severity="success" icon={Save} />
@@ -65,18 +65,18 @@ Heavy components live under subpaths. Install the matching peer only when you us
 
 | Import | Components | Peer dependency |
 | --- | --- | --- |
-| `koi-ui/chart` | `Chart` | `recharts` |
-| `koi-ui/carousel` | `Carousel` | `embla-carousel-react` |
-| `koi-ui/dnd` | `OrderList`, `PickList` | `@dnd-kit/*` |
-| `koi-ui/file` | `FileUpload` | `react-dropzone` |
+| `@koidesign/koi-ui/chart` | `Chart` | `recharts` |
+| `@koidesign/koi-ui/carousel` | `Carousel` | `embla-carousel-react` |
+| `@koidesign/koi-ui/dnd` | `OrderList`, `PickList` | `@dnd-kit/*` |
+| `@koidesign/koi-ui/file` | `FileUpload` | `react-dropzone` |
 
 ```tsx
-import { Chart } from 'koi-ui/chart' // then: pnpm add recharts
+import { Chart } from '@koidesign/koi-ui/chart' // then: pnpm add recharts
 ```
 
 ## Theming
 
-Override any CSS variable to retheme (see `koi-ui/styles.css` for the full list):
+Override any CSS variable to retheme (see `@koidesign/koi-ui/styles.css` for the full list):
 
 ```css
 :root {

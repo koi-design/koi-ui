@@ -25,7 +25,7 @@ export default defineConfig([
     clean: true,
     treeshake: true,
     splitting: false,
-    sourcemap: true,
+    sourcemap: false,
     external: [
       'react',
       'react-dom',
@@ -58,7 +58,7 @@ export default defineConfig([
     format: ['esm', 'cjs'],
     dts: true,
     clean: false,
-    sourcemap: true,
+    sourcemap: false,
     external: ['tailwindcss'],
   },
 ])
