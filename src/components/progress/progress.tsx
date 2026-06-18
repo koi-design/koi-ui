@@ -3,7 +3,7 @@ import * as ProgressPrimitive from '@radix-ui/react-progress'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-const barVariants = cva('h-full w-full flex-1 transition-transform duration-300', {
+const barVariants = cva('h-full w-full flex-1', {
   variants: {
     severity: {
       primary: 'bg-primary',
@@ -56,8 +56,9 @@ export const Progress = React.forwardRef<
       <ProgressPrimitive.Indicator
         className={cn(
           barVariants({ severity }),
-          indeterminate &&
-            'koi-progress-indeterminate absolute inset-y-0 !w-auto rounded-full !transition-none',
+          indeterminate
+            ? 'koi-progress-indeterminate absolute inset-y-0 !w-auto rounded-full'
+            : 'transition-transform duration-300',
         )}
         style={indeterminate ? undefined : { transform: `translateX(-${100 - clamped}%)` }}
       />
