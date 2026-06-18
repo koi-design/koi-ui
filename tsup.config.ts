@@ -12,9 +12,13 @@ function prependUseClient(...files: string[]) {
 
 export default defineConfig([
   {
-    // main entry + subpaths for heavy optional-peer deps
+    // main entry + the Tailwind preset + subpaths for heavy optional-peer deps.
+    // Everything lives in ONE config object: a second config with its own
+    // clean/dts pass races against this object's `clean: true` and the loser's
+    // .d.ts files get wiped (this previously dropped dist/preset.d.ts).
     entry: {
       index: 'src/index.ts',
+      preset: 'src/styles/preset.ts',
       carousel: 'src/carousel.ts',
       dnd: 'src/dnd.ts',
       chart: 'src/chart.ts',
@@ -52,13 +56,5 @@ export default defineConfig([
       )
       copyFileSync('src/styles/globals.css', 'dist/styles.css')
     },
-  },
-  {
-    entry: { preset: 'src/styles/preset.ts' },
-    format: ['esm', 'cjs'],
-    dts: true,
-    clean: false,
-    sourcemap: false,
-    external: ['tailwindcss'],
   },
 ])

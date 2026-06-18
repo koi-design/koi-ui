@@ -7,13 +7,13 @@ import animate from 'tailwindcss-animate'
  * Consumers add this to their tailwind.config and include koi-ui's source in
  * `content` so the utility classes are generated:
  *
- *   import koiPreset from 'koi-ui/preset'
+ *   import koiPreset from '@koidesign/koi-ui/preset'
  *   export default {
  *     presets: [koiPreset],
- *     content: ['./src/**\/*.{ts,tsx}', './node_modules/koi-ui/dist/**\/*.js'],
+ *     content: ['./src/**\/*.{ts,tsx}', './node_modules/@koidesign/koi-ui/dist/**\/*.js'],
  *   }
  *
- * Color tokens resolve to CSS variables defined in `koi-ui/styles.css`
+ * Color tokens resolve to CSS variables defined in `@koidesign/koi-ui/styles.css`
  * (light + dark). Override the variables to retheme.
  */
 const preset: Omit<Config, 'content'> = {
