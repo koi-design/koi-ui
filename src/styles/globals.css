@@ -37,14 +37,21 @@
 
 /* Indeterminate progress bar animation (used by <Progress mode="indeterminate" />). */
 .koi-progress-indeterminate {
-  animation: koi-progress-indeterminate 2s infinite ease-in-out;
+  animation: koi-progress-indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+  will-change: left, right;
 }
 @keyframes koi-progress-indeterminate {
   0% {
-    transform: translateX(-100%);
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
   }
   100% {
-    transform: translateX(350%);
+    left: 100%;
+    right: -90%;
   }
 }
 

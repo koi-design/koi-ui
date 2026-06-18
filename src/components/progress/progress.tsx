@@ -57,7 +57,7 @@ export const Progress = React.forwardRef<
         className={cn(
           barVariants({ severity }),
           indeterminate &&
-            'koi-progress-indeterminate absolute inset-y-0 left-0 !w-2/5 rounded-full !transition-none',
+            'koi-progress-indeterminate absolute inset-y-0 !w-auto rounded-full !transition-none',
         )}
         style={indeterminate ? undefined : { transform: `translateX(-${100 - clamped}%)` }}
       />

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
 import { Page, CodeBlock } from '../docs/Example'
 
 const install = `pnpm add koi-ui
@@ -70,15 +72,22 @@ export function Home() {
 
         <div className="grid gap-3 sm:grid-cols-2">
           {[
-            ['Forms', '22 inputs + Form/validation'],
-            ['Data', 'DataTable, TreeTable, Tree, Timeline…'],
-            ['Overlay', 'Dialog, Sheet, Popover, Tooltip…'],
-            ['Theming', 'CSS variables, light + dark'],
-          ].map(([t, d]) => (
-            <div key={t} className="rounded-lg border border-border p-4">
-              <div className="font-medium">{t}</div>
-              <div className="text-sm text-muted-foreground">{d}</div>
-            </div>
+            ['Forms', '22 inputs + Form/validation', '/forms'],
+            ['Data', 'DataTable, TreeTable, Tree, Timeline…', '/data'],
+            ['Overlay', 'Dialog, Sheet, Popover, Tooltip…', '/overlay'],
+            ['Navigation', 'Menu, Menubar, Breadcrumb, Steps…', '/navigation'],
+          ].map(([t, d, to]) => (
+            <Link
+              key={t}
+              to={to}
+              className="group flex items-center justify-between gap-3 rounded-lg border border-border p-4 transition-colors hover:border-primary hover:bg-muted/40"
+            >
+              <div>
+                <div className="font-medium">{t}</div>
+                <div className="text-sm text-muted-foreground">{d}</div>
+              </div>
+              <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            </Link>
           ))}
         </div>
       </section>

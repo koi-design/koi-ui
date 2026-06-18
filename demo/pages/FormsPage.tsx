@@ -10,7 +10,7 @@ import {
   Textarea,
   Select,
   MultiSelect,
-  Command,
+  AutoComplete,
   Listbox,
   Checkbox,
   RadioGroup,
@@ -36,6 +36,8 @@ const cities = [
   { label: 'Shenzhen', value: 'sz' },
   { label: 'Hangzhou', value: 'hz', disabled: true },
 ]
+
+const countries = ['China', 'Canada', 'Chile', 'Colombia', 'Cambodia', 'Cameroon', 'Brazil', 'France', 'Germany', 'Japan']
 
 const formCode = `import { Form, FormItem, useForm, Input, Select, Checkbox, Button, toast } from 'koi-ui'
 
@@ -109,11 +111,13 @@ const [multi, setMulti] = useState<string[]>(['sh'])
 
 <MultiSelect options={cities} value={multi} onChange={setMulti} filter display="chip" />`
 
-const commandCode = `import { Command } from 'koi-ui'
+const autoCompleteCode = `import { AutoComplete } from 'koi-ui'
 
-<Command
-  groups={[{ heading: 'Cities', items: cities.map((c) => ({ value: c.value, label: c.label })) }]}
-/>`
+const [query, setQuery] = useState('')
+const countries = ['China', 'Canada', 'Chile', 'Colombia', 'Cambodia', 'Cameroon']
+
+// Suggestions are filtered locally; pass onComplete for remote search.
+<AutoComplete value={query} onChange={setQuery} suggestions={countries} dropdown placeholder="Search a country" />`
 
 const listboxCode = `import { Listbox } from 'koi-ui'
 
@@ -123,10 +127,25 @@ const [sel, setSel] = useState('bj')
 
 const checkboxCode = `import { Checkbox } from 'koi-ui'
 
-const [checked, setChecked] = useState(true)
+// A "select all" that is indeterminate when only some children are checked.
+const [perms, setPerms] = useState([true, false, false])
+const all = perms.every(Boolean)
+const some = perms.some(Boolean)
 
-<Checkbox label="Checkbox" checked={checked} onChange={setChecked} />
-<Checkbox label="Indeterminate" indeterminate />`
+<Checkbox
+  label="Select all"
+  checked={all}
+  indeterminate={!all && some}
+  onChange={(c) => setPerms(perms.map(() => c))}
+/>
+{['Read', 'Write', 'Delete'].map((label, i) => (
+  <Checkbox
+    key={label}
+    label={label}
+    checked={perms[i]}
+    onChange={(c) => setPerms(perms.map((p, j) => (j === i ? c : p)))}
+  />
+))}`
 
 const radioGroupCode = `import { RadioGroup } from 'koi-ui'
 
@@ -219,8 +238,9 @@ export function FormsPage() {
   const [pw, setPw] = useState('')
   const [city, setCity] = useState<string>()
   const [multi, setMulti] = useState<string[]>(['sh'])
+  const [query, setQuery] = useState('')
   const [listSel, setListSel] = useState('bj')
-  const [checked, setChecked] = useState(true)
+  const [perms, setPerms] = useState([true, false, false])
   const [radio, setRadio] = useState('a')
   const [on, setOn] = useState(true)
   const [toggle, setToggle] = useState(false)
@@ -284,19 +304,47 @@ export function FormsPage() {
           <Input variant="filled" iconLeft={Search} placeholder="Filled w/ icon" />
         </div>
       </Demo>
-      <Demo title="InputNumber" code={inputNumberCode}><InputNumber value={num} onChange={setNum} min={0} max={100} showButtons /></Demo>
-      <Demo title="Password" code={passwordCode}><Password value={pw} onChange={(e) => setPw(e.target.value)} feedback placeholder="Password" /></Demo>
-      <Demo title="Textarea" code={textareaCode}><Textarea placeholder="Auto-resizing textarea" autoResize /></Demo>
-      <Demo title="Select" code={selectCode}><Select options={cities} value={city} onChange={setCity} placeholder="Pick a city" /></Demo>
-      <Demo title="MultiSelect" code={multiSelectCode}><MultiSelect options={cities} value={multi} onChange={setMulti} filter display="chip" /></Demo>
-      <Demo title="AutoComplete" description="Searchable command palette (cmdk)." code={commandCode}>
-        <Command
-          className="max-w-md"
-          groups={[{ heading: 'Cities', items: cities.map((c) => ({ value: c.value, label: c.label })) }]}
-        />
+      <Demo title="InputNumber" code={inputNumberCode}><div className="max-w-sm"><InputNumber value={num} onChange={setNum} min={0} max={100} showButtons /></div></Demo>
+      <Demo title="Password" code={passwordCode}><div className="max-w-sm"><Password value={pw} onChange={(e) => setPw(e.target.value)} feedback placeholder="Password" /></div></Demo>
+      <Demo title="Textarea" code={textareaCode}><div className="max-w-sm"><Textarea placeholder="Auto-resizing textarea" autoResize /></div></Demo>
+      <Demo title="Select" code={selectCode}><div className="max-w-sm"><Select options={cities} value={city} onChange={setCity} placeholder="Pick a city" /></div></Demo>
+      <Demo title="MultiSelect" code={multiSelectCode}><div className="max-w-sm"><MultiSelect options={cities} value={multi} onChange={setMulti} filter display="chip" /></div></Demo>
+      <Demo title="AutoComplete" description="Text field with a filtered suggestion panel. Type to filter, or ↑/↓ + Enter to pick." code={autoCompleteCode}>
+        <div className="max-w-sm">
+          <AutoComplete
+            value={query}
+            onChange={setQuery}
+            suggestions={countries}
+            dropdown
+            placeholder="Search a country"
+          />
+        </div>
       </Demo>
       <Demo title="Listbox" code={listboxCode}><Listbox options={cities} value={listSel} onChange={setListSel} filter className="max-w-xs" /></Demo>
-      <Demo title="Checkbox" code={checkboxCode}><Checkbox label="Checkbox" checked={checked} onChange={setChecked} /><span className="mx-3" /><Checkbox label="Indeterminate" indeterminate /></Demo>
+      <Demo
+        title="Checkbox"
+        description="A parent checkbox is indeterminate (shows a dash) when only some children are checked — neither fully on nor off."
+        code={checkboxCode}
+      >
+        <div className="space-y-2">
+          <Checkbox
+            label="Select all"
+            checked={perms.every(Boolean)}
+            indeterminate={!perms.every(Boolean) && perms.some(Boolean)}
+            onChange={(c) => setPerms(perms.map(() => c))}
+          />
+          <div className="ml-6 flex flex-col gap-2">
+            {['Read', 'Write', 'Delete'].map((label, i) => (
+              <Checkbox
+                key={label}
+                label={label}
+                checked={perms[i]}
+                onChange={(c) => setPerms(perms.map((p, j) => (j === i ? c : p)))}
+              />
+            ))}
+          </div>
+        </div>
+      </Demo>
       <Demo title="RadioGroup" code={radioGroupCode}>
         <RadioGroup orientation="horizontal" value={radio} onChange={setRadio} options={[{ label: 'A', value: 'a' }, { label: 'B', value: 'b' }, { label: 'C', value: 'c', disabled: true }]} />
       </Demo>
@@ -430,13 +478,19 @@ export function FormsPage() {
           ]}
         />
         <ApiBlock
-          name="Command"
+          name="AutoComplete"
           rows={[
-            { name: 'groups', type: 'CommandGroup[]', description: 'Grouped command items to render.' },
-            { name: 'placeholder', type: 'string', default: "'Type a command or search…'", description: 'Search input placeholder.' },
-            { name: 'emptyText', type: 'ReactNode', default: "'No results found.'", description: 'Content shown when no items match.' },
-            { name: 'searchable', type: 'boolean', default: 'true', description: 'Hide the search input (static list) when false.' },
-            { name: 'className', type: 'string', description: 'Class applied to the root element.' },
+            { name: 'value', type: 'string', description: 'Controlled input text.' },
+            { name: 'onChange', type: '(value: string) => void', description: 'Fires with the current text as the user types or picks a suggestion.' },
+            { name: 'suggestions', type: 'string[]', default: '[]', description: 'Suggestions shown in the panel.' },
+            { name: 'onComplete', type: '(query: string) => void', description: 'Drive suggestions yourself (remote search). When omitted, suggestions are filtered locally.' },
+            { name: 'onSelect', type: '(value: string) => void', description: 'Fires when a suggestion is chosen.' },
+            { name: 'dropdown', type: 'boolean', description: 'Show a toggle button that reveals every suggestion.' },
+            { name: 'minLength', type: 'number', default: '1', description: 'Minimum characters typed before the panel opens.' },
+            { name: 'emptyMessage', type: 'ReactNode', default: "'No results found.'", description: 'Content shown when nothing matches.' },
+            { name: 'inputSize', type: "'small' | 'normal' | 'large'", default: "'normal'", description: 'Control size.' },
+            { name: 'invalid', type: 'boolean', description: 'Apply the error style.' },
+            { name: 'disabled', type: 'boolean', description: 'Disable the field.' },
           ]}
         />
         <ApiBlock

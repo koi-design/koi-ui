@@ -47,8 +47,14 @@ export const Checkbox = React.forwardRef<
       )}
       {...props}
     >
-      <CheckboxPrimitive.Indicator className="flex items-center justify-center">
-        {indeterminate ? <Minus className="size-4" /> : <Check className="size-4" />}
+      {/* forceMount keeps the icon slot in the box at every state, so toggling
+          never changes the box's baseline and the row can't shift height. */}
+      <CheckboxPrimitive.Indicator forceMount className="flex items-center justify-center">
+        {indeterminate ? (
+          <Minus className="size-4" />
+        ) : (
+          <Check className={cn('size-4 transition-opacity', state === true ? 'opacity-100' : 'opacity-0')} />
+        )}
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )
