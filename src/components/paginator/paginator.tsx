@@ -46,9 +46,10 @@ export function Paginator({
   className,
 }: PaginatorProps) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
-  const go = (p: number) => p >= 1 && p <= totalPages && p !== page && onChange?.(p)
-  const from = total === 0 ? 0 : (page - 1) * pageSize + 1
-  const to = Math.min(total, page * pageSize)
+  const currentPage = Math.min(Math.max(page, 1), totalPages)
+  const go = (p: number) => p >= 1 && p <= totalPages && p !== currentPage && onChange?.(p)
+  const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1
+  const to = Math.min(total, currentPage * pageSize)
 
   const navBtn =
     'inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-input px-2 text-sm transition-colors enabled:hover:border-primary enabled:hover:text-primary disabled:pointer-events-none disabled:opacity-60'
@@ -60,10 +61,10 @@ export function Paginator({
           {from}–{to} of {total}
         </span>
       )}
-      <button type="button" className={navBtn} disabled={page <= 1} onClick={() => go(page - 1)} aria-label="Previous page">
+      <button type="button" className={navBtn} disabled={currentPage <= 1} onClick={() => go(currentPage - 1)} aria-label="Previous page">
         <ChevronLeft className="size-4" />
       </button>
-      {pageItems(page, totalPages).map((it, i) =>
+      {pageItems(currentPage, totalPages).map((it, i) =>
         it === '…' ? (
           <span key={`e${i}`} className="px-1 text-muted-foreground">
             …
@@ -73,10 +74,10 @@ export function Paginator({
             type="button"
             key={it}
             onClick={() => go(it)}
-            aria-current={it === page}
+            aria-current={it === currentPage ? 'page' : undefined}
             className={cn(
               'inline-flex h-9 min-w-9 items-center justify-center rounded-md border px-2 text-sm transition-colors',
-              it === page
+              it === currentPage
                 ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-input hover:border-primary hover:text-primary',
             )}
@@ -85,7 +86,7 @@ export function Paginator({
           </button>
         ),
       )}
-      <button type="button" className={navBtn} disabled={page >= totalPages} onClick={() => go(page + 1)} aria-label="Next page">
+      <button type="button" className={navBtn} disabled={currentPage >= totalPages} onClick={() => go(currentPage + 1)} aria-label="Next page">
         <ChevronRight className="size-4" />
       </button>
       {pageSizeOptions && (

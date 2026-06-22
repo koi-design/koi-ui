@@ -63,7 +63,7 @@ export function Form<T = Record<string, unknown>>({
   valuesRef.current = values
   const initialValuesRef = React.useRef(initialValues)
   initialValuesRef.current = initialValues
-  React.useMemo(() => {
+  React.useEffect(() => {
     const internal = form as FormInstanceInternal<T> | undefined
     internal?.__attach?.({
       getStore: () => valuesRef.current,

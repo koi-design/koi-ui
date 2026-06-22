@@ -75,6 +75,8 @@ export function FormItem({
 
   // Has the user interacted with this field yet? Used to gate onBlur validation.
   const dirtyRef = React.useRef(false)
+  const currentValueRef = React.useRef<unknown>(ctx && name ? ctx.values[name] : undefined)
+  currentValueRef.current = ctx && name ? ctx.values[name] : undefined
   const triggers = validateTrigger
     ? Array.isArray(validateTrigger)
       ? validateTrigger
@@ -92,12 +94,13 @@ export function FormItem({
       [trigger]: (arg: unknown) => {
         dirtyRef.current = true
         const value = getValueFromEvent(arg)
+        currentValueRef.current = value
         ctx.setValue(name, value)
         if (triggers.includes('onChange')) ctx.validateField(name, value)
         ;(childProps[trigger] as ((arg: unknown) => void) | undefined)?.(arg)
       },
       onBlur: (e: React.FocusEvent) => {
-        if (dirtyRef.current && triggers.includes('onBlur')) ctx.validateField(name, ctx.values[name])
+        if (dirtyRef.current && triggers.includes('onBlur')) ctx.validateField(name, currentValueRef.current)
         ;(childProps.onBlur as ((e: React.FocusEvent) => void) | undefined)?.(e)
       },
     } as Record<string, unknown>)

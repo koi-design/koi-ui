@@ -20,5 +20,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "demo", "tsup.config.ts", "vite.config.ts", "tailwind.config.ts"]
+  "include": ["src", "demo", "tsup.config.ts", "vite.config.ts", "vitest.config.ts", "tailwind.config.ts"]
 }
