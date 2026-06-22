@@ -17,11 +17,13 @@ import { Page, Demo, Row, ApiSection, ApiBlock } from '../docs/Example'
 
 const SEV = ['primary', 'success', 'info', 'warning', 'danger', 'help'] as const
 
-const toastCode = `import { toast } from 'koi-ui'
+const toastCode = `import { toast } from '@koidesign/koi-ui'
 
 toast('Event created')
 toast.success('Saved!')
-toast.error('Failed')`
+toast.error('Failed')
+toast.warning('Heads up')
+toast.info('FYI')`
 
 const messageCode = `import { Message, Messages } from 'koi-ui'
 
@@ -85,6 +87,8 @@ export function FeedbackPage() {
           <Button label="Default" severity="secondary" onClick={() => toast('Event created')} />
           <Button label="Success" severity="success" onClick={() => toast.success('Saved!')} />
           <Button label="Error" severity="danger" onClick={() => toast.error('Failed')} />
+          <Button label="Warning" severity="warning" onClick={() => toast.warning('Heads up')} />
+          <Button label="Info" severity="info" onClick={() => toast.info('FYI')} />
         </Row>
       </Demo>
 
